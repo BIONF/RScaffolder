@@ -11,14 +11,13 @@
 ## Introduction
 Whole genome sequencing is nowadays a routine tool for biological and clinical research. As a consequence, the number of bacterial genomes in public databases has seen exponential growth over the past two decades. The vast majority of these, however, remain in draft status due to time and/or financial constraints. Although analyses on gene and nucleotide level are generally possible at this stage, the low contiguity of the draft genomes limit their use in high resolution functional and structural comparative genomics.  
 Reference-assisted scaffolding harnesses the information of available closely-related reference genomes to improve contiguity subsequent to a de novo assembly step. Unfortunately, choosing a suitable reference is not straight-forward as genome organization can change rapidly during evolution. To circumvent this problem, recent approaches exploit multiple reference genomes to guide the scaffolding process. These programs however, are either are too optimistic and thereby produce many false contig joints or perform poorly with larger numbers of references. Therefore, we developed a new algorithm which efficiently scales with the increasing number of available genomes. Our approach starts by ordering and orienting the contigs along each reference genome. More specifically, flanking regions of each contig are mapped onto all available sequences to derive a set of signed permutations of contigs (with repetitions). We further define two consecutive high quality mappings within a permutation to be “connected” only if their distance is less than the size of the smallest contig length. These subsets of “connected mappings” are then used to resolve ambiguities in the assembly graph. Yet, with regards to possible rearrangement events, we promote scaffolding only in cases where the connection is unambiguous across the reference genomes. In contrast to many existing solutions, our algorithm is not limited by the number or contiguity of the reference genomes and is robust with regards to false positive joints when run with references of greater evolutionary distance. This is achieved not only by the required unambiguity of observed “connections” but also by employing contig coverage information to control multiplicity of the contigs in the resulting scaffolds.  
-We benchmark our algorihtm with 6 Acinetobacter baumannii genomes assembled both from simulated and real Illumina HiSeq 2500 paired-end read sets together with a set of references comprising 46 publically available finished Acinetobacter genomes. Applying our program, we find that misassembly-corrected contiguity, NGA50, has risen approximately 2 to 20 fold reducing the fragments count by 49% to 76%. Because the work flow is capable of handling large numbers of reference genomes, we further demonstrate how it can be utilised to examine the genomic structure of the assembly by identifying conserved and variable genomic sites across the references taxonomic range.
+
 
 ## Installation
-- There is no installation required. Simply clone the repository (see below). Incompatibilities with your system and Paths have to be changed manually in the code. I plan to enhance usability in the next weeks.
+- There is no installation required. Simply clone the repository (see below). Incompatibilities with your system i.e. paths etc. have to be changed manually in the code. I plan to enhance usability in the next weeks.
 - Please check the dependencies section, as RScaffolder requires a couple of external tools.
-- Please be aware, that currently this tool
 
-### Github
+#### Github
 Choose location to put the repo in, for example in your home directory (no root access required):
 ```bash
 % cd $HOME
@@ -31,13 +30,13 @@ Clone the latest version of the repository:
 
 ## Dependencies
 
-### Python 3.x modules
+#### Python 3.x modules
 - Biopython
 - Nucmer
 - Networkx
 - Graphviz
 
-### MUMmer3.23
+#### MUMmer3.23
 
 
 ## Usage
@@ -75,7 +74,7 @@ optional arguments:
 | contigs_filtered_HT.fasta | Nucleotide FASTA file of the input subsequences (the head and tail) of each contig. |
 | gfa_contig_connections.txt | Connected contig ends based on assembly graph information |
 | gfa_contigs.paths | Links in assembly graph |
-| ht_mapping_distances.tsv | 
+| ht_mapping_distances.tsv | Contais a list of mapped contig end positions for each reference and their distances |
 | ht_connectivity_graph.svg | Vector graphic illustration of the connection graph (only non-repetitve contigs) |
 | ht_connectivity_graph2.svg | Second vector graphic illustration now incorporating the repetitive contigs |
 | contigs_stats.tsv | Statistics with relevant contig information |
