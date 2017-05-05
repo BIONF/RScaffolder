@@ -1,7 +1,7 @@
 '''
 Created on Jun 22, 2016
 
-@author: bardya
+@author: Ba1
 '''
 import os, subprocess, argparse
 
@@ -9,14 +9,13 @@ barebone_script = """#!/bin/bash
 #
 #$-N JOB_subjectname_-_{toolname}
 #$-S /bin/bash/
-USER=bardya;
+USER="$USER";
 MY_DATE=$(/bin/date +%Y%m%d%H%M%S)
 MY_HOST=$(hostname)
 #$-cwd
 #$-o {outdir}/'"$JOB_ID"'_subjectname_{timestamp}.out
 #$-e {outdir}/'"$JOB_ID"'_subjectname_{timestamp}.err
 #$-S /bin/bash
-#-M djahanschiri@bio.uni-frankfurt.de
 #$-m a
 #$-V
 #$-sync y
@@ -120,7 +119,7 @@ def RunNucmer(contig, outdir, refdir):
 
         commands.append([TOOLPATH + 'show-coords', '-rcl', prefix + '.delta', '>', prefix + '.coords'])
         commands.append([TOOLPATH + 'dnadiff', '-d', prefix + '.delta', '-p', prefix + '_dnadiff']) #executed on non filtered
-        commands.append([TOOLPATH + 'show-tiling', '-a' , '-i', '90', '-l', '301', '-c', '-p', prefix + '_pseudo', prefix + '.delta', '>' , prefix + '_tiling_path.txt' ])
+        #commands.append([TOOLPATH + 'show-tiling', '-a' , '-i', '90', '-l', '301', '-c', '-p', prefix + '_pseudo', prefix + '.delta', '>' , prefix + '_tiling_path.txt' ])
         
     if isinstance(commands, list):
         command = " && ".join([" ".join(cmd) for cmd in commands])

@@ -1,12 +1,12 @@
 '''
 Created on Feb 21, 2017
 
-@author: bardya
+@author: Ba1
 '''
 import argparse
 import sys
 from os import listdir, getcwd, makedirs
-from os.path import join, isfile, isdir, basename, dirname
+from os.path import join, isfile, isdir, basename, dirname, abspath, expanduser
 import subprocess
 from Bio import SeqIO
 import pandas as pd
@@ -267,20 +267,20 @@ def parseSpadesAssemblyGraph(spadesdir, records_dict):
         for link, connectedlinks in G.links.copy().items():
             if link == h:
                 node_edges_still_uncon[rid][0] = False
-                print(rid, 'HEAD', link, '[', seg2edge_map[link[0]] +  otransl(link[1]), ']', '->' , connectedlinks)
+                #print(rid, 'HEAD', link, '[', seg2edge_map[link[0]] +  otransl(link[1]), ']', '->' , connectedlinks)
                 if not connectedlinks:
                     unconnected.append(rid + '_H ')
                 else:
                     cons.append(parseLinksToList('NODE_' + rid + '_H', connectedlinks, records_dict))
-                    print("JUST APPENDED,", parseLinksToList('NODE_' + rid + '_H', connectedlinks, records_dict))
+                    #print("JUST APPENDED,", parseLinksToList('NODE_' + rid + '_H', connectedlinks, records_dict))
             elif link == t:
                 node_edges_still_uncon[rid][1] = False
-                print(rid, 'TAIL', link, '[', seg2edge_map[link[0]] +  otransl(link[1]), ']', '->' , connectedlinks)
+                #print(rid, 'TAIL', link, '[', seg2edge_map[link[0]] +  otransl(link[1]), ']', '->' , connectedlinks)
                 if not connectedlinks:
                     unconnected.append(rid + '_T ')
                 else:
                     cons.append(parseLinksToList('NODE_' + rid + '_T', connectedlinks, records_dict))
-                    print("JUST APPENDED,", parseLinksToList('NODE_' + rid + '_T', connectedlinks, records_dict))
+                    #print("JUST APPENDED,", parseLinksToList('NODE_' + rid + '_T', connectedlinks, records_dict))
             elif link == not_h:
                 node_edges_still_uncon[rid][2] = False
                 #print(rid, 'CONTIG_DIRECTION', 'HEAD', link, '[', seg2edge_map[link[0]] +  otransl(link[1]) ,']', '->' , connectedlinks)
@@ -1047,10 +1047,10 @@ def checkAndConvertHTpaths(non_redundant_paths, ):
     to a notion containing + and - for strandedness info"""
     #from itertools import tee, islice, chain, zip
     
-    def grouped(iterable, n):
+    def grouped(s, n):
         """s transformed to (s0,s1,s2,...sn-1), (sn,sn+1,sn+2,...s2n-1), 
         (s2n,s2n+1,s2n+2,...s3n-1), ..."""
-        return zip(*[iter(iterable)]*n)
+        return zip(*[iter(s)]*n)
     
     converted_paths = []
     
@@ -1060,14 +1060,18 @@ def checkAndConvertHTpaths(non_redundant_paths, ):
         current_id = []
         current_ht = []
         orientations = []
-
-        # here check whether the first element is incomplete and if yes infer orientation
+        
+        # here check whether the first contig is incomplete and if yes infer orientation
         # and let the rest of the path be iterated starting from the second element to make
         # the modulo 2 criterion work
                 
-        gr_path = grouped(p, 2)
+        gr_path = list(grouped(p, 2))
+        print(p)
+        print(list(gr_path))
+        print("""####\n####\n####\n####""")
+        
         flag = 0
-        gr = next(gr_path)
+        #gr = next(gr_path)
         
         if not gr[0].split('_')[0] == gr[1].split('_')[0]:
             current_id.append(gr[0].split('_')[0])
@@ -1199,6 +1203,8 @@ if __name__ == '__main__':
     if not args.force_flag:
         assert len(listdir(args.outdirpath)) == 0, "Output directory not empty, try the '-f' option to force overwriting"
     
+    args.outdirpath = abspath(expanduser(args.outdirpath))
+    
     #######################################################################################
     
     ################################### GET & PARSE INPUT FILES ###########################
@@ -1239,7 +1245,7 @@ if __name__ == '__main__':
     map_outdir = join(args.outdirpath, 'mapped')
     if not isdir(map_outdir):
         makedirs(map_outdir, 0o777)
-    nucmerMapping(head_tail_filepath, args.refgenomesdir, map_outdir)
+    #nucmerMapping(head_tail_filepath, args.refgenomesdir, map_outdir)
     
     #######################################################################################
 
