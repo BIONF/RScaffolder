@@ -1131,6 +1131,7 @@ def checkAndCountOccurences(non_redundant_paths, df):
     return df
     
 def produceScaffoldRecords(final_paths, record_dict, mode='100N'):
+    """ Constructs the actual scaffolded contigs and writes em in a fasta file """
     
     from Bio.Seq import Seq
     from Bio.SeqRecord import SeqRecord
@@ -1145,7 +1146,7 @@ def produceScaffoldRecords(final_paths, record_dict, mode='100N'):
     scaffolds_records = []
         
     for i, path in enumerate(final_paths):
-        scaf_id = ['SCAFFOLD', str(i+1), 'path', '[']
+        scaf_id = ['SCAFFOLD', str(i+1), 'path', '['] #contruct fasta scaffold header indicating underlying contig path
         scaf_seq = Seq("")
         
         for j, e in enumerate(path):
@@ -1153,13 +1154,15 @@ def produceScaffoldRecords(final_paths, record_dict, mode='100N'):
             used_ids.append(e[1:])
             
             if e.startswith('-'):
-                scaf_seq += record_dict[e[1:]].seq.reverse_complement()
+                contig_seq = record_dict[e[1:]].seq.reverse_complement()
             else:
-                scaf_seq += record_dict[e[1:]].seq
+                contig_seq = record_dict[e[1:]].seq
         
-            if not j == len(path)-1:
-                if mode == '100N':
-                    scaf_seq += Seq('N'*100)
+            if mode == '100N':
+                scaf_seq += Seq('N'*100)
+                scaf_seq += contig_seq
+            elif mode == 'K127': ##############HERE NEEDS IMPLEMENTATION OF CHECK BREAKS, IF OVERLAP BREAK THEN DO THIS ELSE N MODE
+                scaf_seq += contig_seq[127:]
             
         scaffolds_records.append( SeqRecord( scaf_seq, id = '_'.join(scaf_id) + '_]' + '_length_' + str(len(scaf_seq)), description=""))
     

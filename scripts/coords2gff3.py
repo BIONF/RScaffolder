@@ -637,16 +637,19 @@ def parseContigBreaks(featLst):
     
     for i, feat in enumerate(featLst.featurelst):
         
-        if i == 0:
+        current_seqid = feat.seqid
+        
+        if i == 0 or current_seqid != old_seqid:
             #a pseudo feature from which the uncovered region at the start of the sequence starts
             start_pseudo_feature = {"start": "0", "end": "1" }
             feat0 = Feature(**start_pseudo_feature)
-            tmp_breaklength = min(int(feat.end), int(feat.start)) - max(int(feat0.start), int(feat0.end)) + 1
+            tmp_breaklength = min(int(feat.end), int(feat.start)) - max(int(feat0.start), int(feat0.end)) - 1
             if tmp_breaklength < 0: #skip if genome is covered right from position 1
                 feat0 = feat
                 continue
         
-        breaklength = min(int(feat.end), int(feat.start)) - max(int(feat0.start), int(feat0.end)) + 1
+        old_seqid = current_seqid
+        breaklength = min(int(feat.end), int(feat.start)) - max(int(feat0.start), int(feat0.end)) - 1
         
         if breaklength < 0:
             name_short = "OvBreak "
@@ -659,8 +662,8 @@ def parseContigBreaks(featLst):
         else:
             name_short = "Break "
             ns = "br"
-            start = str(max(int(feat0.start), int(feat0.end)) + 1)
-            end = str(min(int(feat.end), int(feat.start)) - 1)
+            start = str(max(int(feat0.start), int(feat0.end)))
+            end = str(min(int(feat.end), int(feat.start)))
             custom_seqtype = "intercontig_region"
         
         break_feat = {"seqid": feat.seqid,
@@ -674,7 +677,7 @@ def parseContigBreaks(featLst):
                       "phase": '.',
                       "seqattributes": "ID={};Name={};idy={};cov={};lenq={};lena={};Is_circular={};mol_type=genomic{};".format(
                                      ns + str(ID), name_short + str(ID), "NA", "NA", breaklength, breaklength, "true", "DNA")}
-             
+        
         ID += 1              
         prelst.append(Feature(**break_feat))
         feat0 = feat
